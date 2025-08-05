@@ -11,9 +11,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
-// Route imports
-const indexRouter = require('./routes');
-
 // Validate required environment variables
 const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SESSION_SECRET'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -41,13 +38,7 @@ try {
 }
 
 // Import routes
-const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth');
-const productsRouter = require('./routes/products');
-const cartRouter = require('./routes/cart');
-const ordersRouter = require('./routes/orders');
-const profileRouter = require('./routes/profile');
-const adminRouter = require('./routes/admin');
+const indexRouter = require('./routes');
 
 const app = express();
 
