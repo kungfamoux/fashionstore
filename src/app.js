@@ -11,6 +11,9 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
+// Route imports
+const indexRouter = require('./routes');
+
 // Validate required environment variables
 const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SESSION_SECRET'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -80,12 +83,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/', indexRouter);
-app.use('/auth', authRouter);
-app.use('/products', productsRouter);
-app.use('/cart', cartRouter);
-app.use('/orders', ordersRouter);
-app.use('/profile', profileRouter);
-app.use('/admin', adminRouter);
+// Add more routes here as needed
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
