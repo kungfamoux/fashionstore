@@ -135,5 +135,26 @@ app.use((req, res) => {
   });
 });
 
-// Export the app for testing or programmatic use
-module.exports = app;
+// Create HTTP server in development
+let server;
+if (process.env.NODE_ENV !== 'production') {
+  const http = require('http');
+  const port = process.env.PORT || 3000;
+  server = http.createServer(app);
+  server.on('error', (error) => {
+    console.error('Server error:', error);
+    process.exit(1);
+  });
+  
+  server.on('listening', () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+  
+  server.listen(port);
+}
+
+// Export both app and server for different use cases
+module.exports = {
+  app,
+  server
+};

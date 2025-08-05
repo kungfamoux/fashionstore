@@ -18,13 +18,19 @@ const isVercel = process.env.VERCEL === '1';
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-// Create HTTP server only if not in Vercel environment
-let server;
-if (!isVercel) {
-  server = http.createServer(app);
+// Only create server if not in Vercel environment
+if (!process.env.VERCEL) {
+  /**
+   * Create HTTP server.
+   */
+  const server = http.createServer(app);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
   server.listen(port);
   server.on('error', onError);
-  server.on('listening', onListening);
+  server.on('listening', onListening.bind(null, server));
 } else {
   // For Vercel, log the environment for debugging
   console.log('Vercel Environment:', {
@@ -35,37 +41,38 @@ if (!isVercel) {
   });
 }
 
-// Normalize a port into a number, string, or false.
+/**
+ * Normalize a port into a number, string, or false.
+ */
 function normalizePort(val) {
   const port = parseInt(val, 10);
-  if (isNaN(port)) return val; // named pipe
-  if (port >= 0) return port; // port number
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
   return false;
 }
 
-// Event listener for HTTP server "error" event.
+/**
+ * Event listener for HTTP server "error" event.
+ */
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
-  
-  // Handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+  const bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
 
-  // Handle specific listen errors with friendly messages
+  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
