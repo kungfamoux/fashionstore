@@ -1,6 +1,16 @@
 const app = require('./app');
 const http = require('http');
 
+// Enhanced error handling
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // Check if running in Vercel
 const isVercel = process.env.VERCEL === '1';
 
@@ -15,6 +25,14 @@ if (!isVercel) {
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
+} else {
+  // For Vercel, log the environment for debugging
+  console.log('Vercel Environment:', {
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL: process.env.VERCEL,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+    VERCEL_REGION: process.env.VERCEL_REGION
+  });
 }
 
 // Normalize a port into a number, string, or false.
@@ -32,6 +50,20 @@ function onError(error) {
   }
 
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+  
+  // Handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
 
   // Handle specific listen errors with friendly messages
   switch (error.code) {

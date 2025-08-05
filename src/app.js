@@ -1,4 +1,7 @@
+// Load environment variables first
 require('dotenv').config();
+
+// Core dependencies
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -8,10 +11,31 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Validate required environment variables
+const requiredEnvVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SESSION_SECRET'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars.join(', '));
+  process.exit(1);
+}
+
+// Initialize Supabase client with error handling
+let supabase;
+try {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase URL and Anon Key are required');
+  }
+  
+  supabase = createClient(supabaseUrl, supabaseKey);
+  console.log('✅ Supabase client initialized successfully');
+} catch (error) {
+  console.error('❌ Failed to initialize Supabase client:', error.message);
+  process.exit(1);
+}
 
 // Import routes
 const indexRouter = require('./routes/index');
@@ -70,18 +94,44 @@ app.use((req, res, next) => {
   next(err);
 });
 
-// Error handler
-app.use((err, req, res, next) => {
+// Enhanced error handler
+app.use(function(err, req, res, next) {
+  // Log the error
+  console.error('❌ Error:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.originalUrl,
+    method: req.method,
+    headers: req.headers,
+    body: req.body
+  });
+
   // Set locals, only providing error in development
+  const isDev = req.app.get('env') === 'development';
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = isDev ? err : {};
+  res.locals.status = err.status || 500;
+
+  // Respond with JSON for API requests
+  if (req.xhr || req.path.startsWith('/api/')) {
+    return res.status(err.status || 500).json({
+      error: {
+        message: err.message || 'Internal Server Error',
+        ...(isDev && { stack: err.stack })
+      }
+    });
+  }
 
   // Render the error page
   res.status(err.status || 500);
-  res.render('error', {
-    title: 'Error',
-    message: err.message,
-    error: process.env.NODE_ENV === 'development' ? err : {}
+  res.render('error');
+});
+
+// Handle 404 - Must be after all other routes
+app.use((req, res) => {
+  res.status(404).render('error', {
+    message: 'Page Not Found',
+    error: { status: 404 }
   });
 });
 
