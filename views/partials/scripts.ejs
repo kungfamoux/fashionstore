@@ -1,0 +1,13 @@
+<!-- Additional scripts specific to pages will be included here -->
+<% if (typeof additionalScripts !== 'undefined') { %>
+  <% additionalScripts.forEach(script => { %>
+    <script src="<%= script %>" defer></script>
+  <% }); %>
+<% } %>
+
+<!-- Page-specific inline scripts -->
+<% if (typeof inlineScripts !== 'undefined') { %>
+  <script>
+    <%- inlineScripts.join('\n') %>
+  </script>
+<% } %>

@@ -1,0 +1,171 @@
+<%- include('layouts/main', { 
+    title: 'Checkout - FashionStore',
+    additionalStyles: ['/css/checkout.css']
+}) %>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+    <div class="container">
+        <a href="/">Home</a> / <a href="/cart">Cart</a> / <span>Checkout</span>
+    </div>
+</div>
+
+<!-- Checkout Section -->
+<section class="checkout-section">
+    <div class="container">
+        <div class="checkout-container">
+            <!-- Checkout Form -->
+            <div class="checkout-form-container">
+                <div class="checkout-header">
+                    <h1>Checkout</h1>
+                    <div class="checkout-steps">
+                        <div class="step active" data-step="1">1. Shipping</div>
+                        <div class="step" data-step="2">2. Payment</div>
+                        <div class="step" data-step="3">3. Review</div>
+                    </div>
+                </div>
+
+                <!-- Shipping Form -->
+                <form id="shippingForm" class="checkout-form active" data-step="1">
+                    <h2>Shipping Information</h2>
+                    
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" placeholder="Street address" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Country</label>
+                            <select required>
+                                <option value="">Select country</option>
+                                <option value="US">United States</option>
+                                <option value="CA">Canada</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <select required>
+                                <option value="">Select state</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Postal Code</label>
+                            <input type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="/cart" class="btn btn-outline">Back to Cart</a>
+                        <button type="button" class="btn btn-primary next-step" data-next="2">Continue</button>
+                    </div>
+                </form>
+
+                <!-- Payment Form -->
+                <form id="paymentForm" class="checkout-form" data-step="2">
+                    <h2>Payment Information</h2>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-tabs">
+                            <button type="button" class="active" data-payment="card">Card</button>
+                            <button type="button" data-payment="paypal">PayPal</button>
+                        </div>
+
+                        <div class="payment-content active" id="card-payment">
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" placeholder="1234 5678 9012 3456" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Name on Card</label>
+                                <input type="text" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="text" placeholder="MM/YY" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <input type="text" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-content" id="paypal-payment">
+                            <p>You'll be redirected to PayPal to complete your purchase.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline prev-step" data-prev="1">Back</button>
+                        <button type="submit" class="btn btn-primary">Place Order</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                
+                <div class="order-items">
+                    <% cartItems.forEach(item => { %>
+                        <div class="order-item">
+                            <img src="<%= item.image %>" alt="<%= item.name %>">
+                            <div class="item-details">
+                                <h4><%= item.name %></h4>
+                                <p>Qty: <%= item.quantity %></p>
+                                <p>$<%= (item.price * item.quantity).toFixed(2) %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <div class="order-totals">
+                    <div class="order-row">
+                        <span>Subtotal</span>
+                        <span>$<%= subtotal.toFixed(2) %></span>
+                    </div>
+                    <div class="order-row">
+                        <span>Shipping</span>
+                        <span>$<%= shippingCost.toFixed(2) %></span>
+                    </div>
+                    <div class="order-row total">
+                        <span>Total</span>
+                        <span>$<%= (subtotal + shippingCost).toFixed(2) %></span>
+                    </div>
+                </div>
+
+                <div class="secure-checkout">
+                    <i class="fas fa-lock"></i>
+                    <span>Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,6 @@
+<!-- Additional styles specific to pages will be included here -->
+<% if (typeof additionalStyles !== 'undefined') { %>
+  <% additionalStyles.forEach(style => { %>
+    <link rel="stylesheet" href="<%= style %>">
+  <% }); %>
+<% } %>

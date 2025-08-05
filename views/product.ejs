@@ -1,0 +1,351 @@
+<%- include('layouts/main', { 
+    title: product.name + ' - FashionStore',
+    additionalStyles: ['/css/product.css']
+}) %>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+    <div class="container">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/shop">Shop</a>
+        <span>/</span>
+        <a href="#"><%= product.category %></a>
+        <span>/</span>
+        <span><%= product.name %></span>
+    </div>
+</div>
+
+<!-- Product Detail Section -->
+<section class="product-detail">
+    <div class="container">
+        <div class="product-detail-container">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                <div class="main-image">
+                    <img src="<%= product.images[0] %>" alt="<%= product.name %>" id="mainProductImage">
+                </div>
+                <div class="thumbnail-container">
+                    <% product.images.forEach((image, index) => { %>
+                        <div class="thumbnail <%= index === 0 ? 'active' : '' %>" data-image="<%= image %>">
+                            <img src="<%= image %>" alt="<%= product.name %> Thumbnail">
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="product-info">
+                <% if (product.badge) { %>
+                    <span class="product-badge"><%= product.badge %></span>
+                <% } %>
+                
+                <h1 class="product-title"><%= product.name %></h1>
+                
+                <div class="product-meta">
+                    <div class="product-rating">
+                        <% for (let i = 1; i <= 5; i++) { %>
+                            <i class="<%= i <= product.rating ? 'fas' : (i - 0.5 <= product.rating ? 'fas fa-star-half-alt' : 'far') %> fa-star"></i>
+                        <% } %>
+                        <a href="#reviews" class="review-count">(<%= product.reviewCount %> reviews)</a>
+                    </div>
+                    <div class="product-sku">SKU: <%= product.sku %></div>
+                    <div class="product-availability">
+                        Availability: 
+                        <span class="<%= product.inStock ? 'in-stock' : 'out-of-stock' %>">
+                            <%= product.inStock ? 'In Stock' : 'Out of Stock' %>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="product-price">
+                    <% if (product.originalPrice) { %>
+                        <span class="current-price">$<%= product.price.toFixed(2) %></span>
+                        <span class="original-price">$<%= product.originalPrice.toFixed(2) %></span>
+                        <span class="discount"><%= Math.round((1 - product.price / product.originalPrice) * 100) %>% OFF</span>
+                    <% } else { %>
+                        <span class="current-price">$<%= product.price.toFixed(2) %></span>
+                    <% } %>
+                </div>
+                
+                <div class="product-description">
+                    <p><%= product.description %></p>
+                </div>
+                
+                <!-- Size Selection -->
+                <% if (product.sizes && product.sizes.length) { %>
+                    <div class="product-option">
+                        <label>Size:</label>
+                        <div class="size-options">
+                            <% product.sizes.forEach(size => { %>
+                                <div class="size-option">
+                                    <input type="radio" id="size-<%= size.toLowerCase() %>" name="size" value="<%= size %>" 
+                                           <%= size === 'M' ? 'checked' : '' %>>
+                                    <label for="size-<%= size.toLowerCase() %>"><%= size %></label>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <!-- Color Selection -->
+                <% if (product.colors && product.colors.length) { %>
+                    <div class="product-option">
+                        <label>Color:</label>
+                        <div class="color-options">
+                            <% product.colors.forEach((color, index) => { %>
+                                <div class="color-option">
+                                    <input type="radio" id="color-<%= index %>" name="color" 
+                                           value="<%= color.name %>" <%= index === 0 ? 'checked' : '' %>>
+                                    <label for="color-<%= index %>" 
+                                           style="background-color: <%= color.code %>;" 
+                                           title="<%= color.name %>">
+                                    </label>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <!-- Quantity -->
+                <div class="product-quantity">
+                    <label>Quantity:</label>
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-btn minus">-</button>
+                        <input type="number" name="quantity" min="1" max="<%= product.inStock %>" value="1">
+                        <button type="button" class="quantity-btn plus">+</button>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="product-actions">
+                    <button class="btn btn-primary add-to-cart" 
+                            data-product-id="<%= product.id %>"
+                            data-product-name="<%= product.name %>"
+                            data-product-price="<%= product.price %>"
+                            data-product-image="<%= product.images[0] %>"
+                            <%= product.inStock ? '' : 'disabled' %>>
+                        <%= product.inStock ? 'Add to Cart' : 'Out of Stock' %>
+                    </button>
+                    <button class="btn btn-outline wishlist-toggle" data-product-id="<%= product.id %>">
+                        <i class="<%= wishlistItems.includes(product.id) ? 'fas' : 'far' %> fa-heart"></i>
+                        <span>Wishlist</span>
+                    </button>
+                </div>
+                
+                <!-- Product Meta -->
+                <div class="product-meta-footer">
+                    <div class="meta-item">
+                        <span>Category:</span>
+                        <a href="#"><%= product.category %></a>
+                    </div>
+                    <div class="meta-item">
+                        <span>Share:</span>
+                        <div class="social-share">
+                            <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="pinterest"><i class="fab fa-pinterest-p"></i></a>
+                            <a href="#" class="envelope"><i class="far fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Tabs -->
+        <div class="product-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">Description</button>
+                <button class="tab-btn" data-tab="additional-info">Additional Information</button>
+                <button class="tab-btn" data-tab="reviews">Reviews (<%= product.reviewCount %>)</button>
+            </div>
+            
+            <div class="tabs-content">
+                <!-- Description Tab -->
+                <div class="tab-pane active" id="description">
+                    <h3>Product Description</h3>
+                    <p><%= product.fullDescription || 'No detailed description available.' %></p>
+                    
+                    <h4>Features</h4>
+                    <ul class="feature-list">
+                        <li>High-quality materials for lasting comfort</li>
+                        <li>Designed for style and durability</li>
+                        <li>Perfect for any occasion</li>
+                        <li>Easy to care for and maintain</li>
+                    </ul>
+                </div>
+                
+                <!-- Additional Info Tab -->
+                <div class="tab-pane" id="additional-info">
+                    <h3>Additional Information</h3>
+                    <table class="info-table">
+                        <tr>
+                            <th>Weight</th>
+                            <td><%= product.weight || '0.5' %> kg</td>
+                        </tr>
+                        <tr>
+                            <th>Dimensions</th>
+                            <td><%= product.dimensions || '30 x 20 x 5 cm' %></td>
+                        </tr>
+                        <tr>
+                            <th>Material</th>
+                            <td><%= product.material || 'Cotton 100%' %></td>
+                        </tr>
+                        <tr>
+                            <th>Care Instructions</th>
+                            <td>Machine wash cold, Tumble dry low, Do not bleach, Iron low heat, Do not dry clean</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Reviews Tab -->
+                <div class="tab-pane" id="reviews">
+                    <div class="reviews-container">
+                        <div class="reviews-summary">
+                            <div class="average-rating">
+                                <div class="average"><%= product.rating %></div>
+                                <div class="stars">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <i class="<%= i <= Math.floor(product.rating) ? 'fas' : (i - 0.5 <= product.rating ? 'fas fa-star-half-alt' : 'far') %> fa-star"></i>
+                                    <% } %>
+                                </div>
+                                <div class="total-reviews">Based on <%= product.reviewCount %> reviews</div>
+                            </div>
+                            
+                            <div class="rating-bars">
+                                <% [5, 4, 3, 2, 1].forEach(star => { 
+                                    const percentage = product.ratingDistribution && product.ratingDistribution[star] 
+                                        ? (product.ratingDistribution[star] / product.reviewCount * 100) 
+                                        : 0;
+                                %>
+                                    <div class="rating-bar">
+                                        <div class="star-count">
+                                            <span><%= star %></span>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="bar-container">
+                                            <div class="bar" style="width: <%= percentage %>%"></div>
+                                        </div>
+                                        <div class="percentage"><%= Math.round(percentage) %>%</div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                        
+                        <div class="reviews-list">
+                            <h3>Customer Reviews</h3>
+                            
+                            <!-- Review Form (for logged in users) -->
+                            <div class="review-form-container">
+                                <h4>Write a Review</h4>
+                                <form class="review-form">
+                                    <div class="form-group">
+                                        <label>Your Rating</label>
+                                        <div class="rating-input">
+                                            <% for (let i = 5; i >= 1; i--) { %>
+                                                <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" <%= i === 5 ? 'checked' : '' %>>
+                                                <label for="star<%= i %>"><i class="far fa-star"></i></label>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="review-title">Review Title</label>
+                                        <input type="text" id="review-title" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="review-text">Your Review</label>
+                                        <textarea id="review-text" class="form-control" rows="5" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Sample Reviews -->
+                            <div class="review">
+                                <div class="review-header">
+                                    <div class="reviewer">John D.</div>
+                                    <div class="review-date">October 15, 2023</div>
+                                    <div class="review-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                </div>
+                                <h4 class="review-title">Great product!</h4>
+                                <p class="review-text">I'm really happy with this purchase. The quality is excellent and it fits perfectly. Would definitely buy again!</p>
+                            </div>
+                            
+                            <div class="review">
+                                <div class="review-header">
+                                    <div class="reviewer">Sarah M.</div>
+                                    <div class="review-date">October 5, 2023</div>
+                                    <div class="review-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                </div>
+                                <h4 class="review-title">Very comfortable</h4>
+                                <p class="review-text">The material is soft and comfortable. The color is exactly as shown in the pictures. Highly recommend!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <% if (relatedProducts && relatedProducts.length) { %>
+            <div class="related-products">
+                <h2 class="section-title">You May Also Like</h2>
+                <div class="products-grid">
+                    <% relatedProducts.forEach(relatedProduct => { %>
+                        <div class="product-card">
+                            <% if (relatedProduct.badge) { %>
+                                <span class="product-badge"><%= relatedProduct.badge %></span>
+                            <% } %>
+                            <div class="product-image">
+                                <img src="<%= relatedProduct.image %>" alt="<%= relatedProduct.name %>">
+                                <div class="product-actions">
+                                    <button class="wishlist-toggle" data-product-id="<%= relatedProduct.id %>">
+                                        <i class="<%= wishlistItems.includes(relatedProduct.id) ? 'fas' : 'far' %> fa-heart"></i>
+                                    </button>
+                                    <button class="quick-view" data-product-id="<%= relatedProduct.id %>">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <a href="/product/<%= relatedProduct.slug %>" class="btn btn-primary">View Details</a>
+                            </div>
+                            <div class="product-details">
+                                <h3><a href="/product/<%= relatedProduct.slug %>"><%= relatedProduct.name %></a></h3>
+                                <div class="product-price">
+                                    <% if (relatedProduct.originalPrice) { %>
+                                        <span class="current-price">$<%= relatedProduct.price.toFixed(2) %></span>
+                                        <span class="original-price">$<%= relatedProduct.originalPrice.toFixed(2) %></span>
+                                    <% } else { %>
+                                        <span class="current-price">$<%= relatedProduct.price.toFixed(2) %></span>
+                                    <% } %>
+                                </div>
+                                <div class="product-rating">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <i class="<%= i <= relatedProduct.rating ? 'fas' : (i - 0.5 <= relatedProduct.rating ? 'fas fa-star-half-alt' : 'far') %> fa-star"></i>
+                                    <% } %>
+                                    <span class="rating-count">(<%= relatedProduct.reviewCount %>)</span>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<!-- Recently Viewed (can be implemented with local storage) -->
+<div class="recently-viewed" id="recentlyViewed">
+    <!-- Will be populated by JavaScript -->
+</div>

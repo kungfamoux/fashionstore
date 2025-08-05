@@ -1,0 +1,228 @@
+<%- include('layouts/main', { 
+    title: 'Shopping Cart - FashionStore',
+    additionalStyles: ['/css/cart.css']
+}) %>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+    <div class="container">
+        <a href="/">Home</a>
+        <span>/</span>
+        <span>Shopping Cart</span>
+    </div>
+</div>
+
+<!-- Cart Section -->
+<section class="cart-section">
+    <div class="container">
+        <% if (cartItems && cartItems.length > 0) { %>
+            <div class="cart-header">
+                <h1>Your Shopping Cart</h1>
+                <p>You have <span class="item-count"><%= cartItems.length %></span> item(s) in your cart</p>
+            </div>
+            
+            <div class="cart-container">
+                <!-- Cart Items -->
+                <div class="cart-items">
+                    <div class="cart-table-header">
+                        <div class="product-info">Product</div>
+                        <div class="product-price">Price</div>
+                        <div class="product-quantity">Quantity</div>
+                        <div class="product-total">Total</div>
+                        <div class="product-remove"></div>
+                    </div>
+                    
+                    <div class="cart-items-list">
+                        <% cartItems.forEach((item, index) => { %>
+                            <div class="cart-item" data-product-id="<%= item.id %>">
+                                <div class="product-info">
+                                    <div class="product-image">
+                                        <img src="<%= item.image %>" alt="<%= item.name %>">
+                                    </div>
+                                    <div class="product-details">
+                                        <h3><a href="/product/<%= item.slug %>"><%= item.name %></a></h3>
+                                        <% if (item.size) { %>
+                                            <p class="product-variant">Size: <span><%= item.size %></span></p>
+                                        <% } %>
+                                        <% if (item.color) { %>
+                                            <p class="product-variant">
+                                                Color: 
+                                                <span class="color-swatch" style="background-color: <%= item.colorCode || '#ccc' %>"></span>
+                                                <span><%= item.color %></span>
+                                            </p>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price">$<%= item.price.toFixed(2) %></span>
+                                    <% if (item.originalPrice) { %>
+                                        <span class="original-price">$<%= item.originalPrice.toFixed(2) %></span>
+                                    <% } %>
+                                </div>
+                                <div class="product-quantity">
+                                    <div class="quantity-selector">
+                                        <button type="button" class="quantity-btn minus" data-index="<%= index %>">-</button>
+                                        <input type="number" value="<%= item.quantity %>" min="1" max="<%= item.maxQuantity || 10 %>" 
+                                               data-index="<%= index %>" class="quantity-input">
+                                        <button type="button" class="quantity-btn plus" data-index="<%= index %>">+</button>
+                                    </div>
+                                    <button class="update-cart-btn" data-index="<%= index %>">Update</button>
+                                </div>
+                                <div class="product-total">
+                                    $<%= (item.price * item.quantity).toFixed(2) %>
+                                </div>
+                                <div class="product-remove">
+                                    <button class="remove-item" data-index="<%= index %>">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                    
+                    <div class="cart-actions">
+                        <div class="coupon-form">
+                            <input type="text" placeholder="Coupon code" class="coupon-input">
+                            <button type="button" class="btn btn-outline">Apply Coupon</button>
+                        </div>
+                        <div class="cart-buttons">
+                            <a href="/shop" class="btn btn-outline">Continue Shopping</a>
+                            <button type="button" class="btn btn-outline update-cart">Update Cart</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cart Summary -->
+                <div class="cart-summary">
+                    <h3>Cart Summary</h3>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>$<%= subtotal.toFixed(2) %></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <span class="shipping-options">
+                                <% if (shippingCost === 0) { %>
+                                    Free Shipping
+                                <% } else { %>
+                                    $<%= shippingCost.toFixed(2) %>
+                                <% } %>
+                            </span>
+                        </div>
+                        <div class="summary-row discount-row">
+                            <span>Discount</span>
+                            <span class="discount-amount">
+                                <% if (discount > 0) { %>
+                                    -$<%= discount.toFixed(2) %>
+                                <% } else { %>
+                                    $0.00
+                                <% } %>
+                            </span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span class="total-amount">$<%= (subtotal + shippingCost - discount).toFixed(2) %></span>
+                        </div>
+                        <div class="tax-note">
+                            *Taxes and shipping calculated at checkout
+                        </div>
+                        <button class="btn btn-primary btn-checkout">Proceed to Checkout</button>
+                        <div class="secure-checkout">
+                            <i class="fas fa-lock"></i>
+                            <span>Secure Checkout</span>
+                        </div>
+                        <div class="accepted-payments">
+                            <span>We accept:</span>
+                            <div class="payment-methods">
+                                <i class="fab fa-cc-visa"></i>
+                                <i class="fab fa-cc-mastercard"></i>
+                                <i class="fab fa-cc-amex"></i>
+                                <i class="fab fa-cc-paypal"></i>
+                                <i class="fab fa-apple-pay"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recently Viewed -->
+            <div class="recently-viewed">
+                <h3>Recently Viewed</h3>
+                <div class="products-grid">
+                    <!-- Sample recently viewed items -->
+                    <% for (let i = 0; i < Math.min(4, recentlyViewed.length); i++) { 
+                        const product = recentlyViewed[i];
+                    %>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="<%= product.image %>" alt="<%= product.name %>">
+                                <div class="product-actions">
+                                    <button class="wishlist-toggle" data-product-id="<%= product.id %>">
+                                        <i class="<%= wishlistItems.includes(product.id) ? 'fas' : 'far' %> fa-heart"></i>
+                                    </button>
+                                    <button class="add-to-cart" 
+                                            data-product-id="<%= product.id %>"
+                                            data-product-name="<%= product.name %>"
+                                            data-product-price="<%= product.price %>"
+                                            data-product-image="<%= product.image %>">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </div>
+                                <a href="/product/<%= product.slug %>" class="view-details">View Details</a>
+                            </div>
+                            <div class="product-details">
+                                <h3><a href="/product/<%= product.slug %>"><%= product.name %></a></h3>
+                                <div class="product-price">
+                                    <% if (product.originalPrice) { %>
+                                        <span class="current-price">$<%= product.price.toFixed(2) %></span>
+                                        <span class="original-price">$<%= product.originalPrice.toFixed(2) %></span>
+                                    <% } else { %>
+                                        <span class="current-price">$<%= product.price.toFixed(2) %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            
+        <% } else { %>
+            <!-- Empty Cart -->
+            <div class="empty-cart">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added any items to your cart yet.</p>
+                <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<!-- Cart Sidebar (Mobile) -->
+<div class="cart-sidebar-overlay"></div>
+<div class="cart-sidebar">
+    <div class="cart-sidebar-header">
+        <h3>Your Cart</h3>
+        <button class="close-cart-sidebar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="cart-sidebar-content">
+        <!-- Cart items will be loaded here via JavaScript -->
+    </div>
+    <div class="cart-sidebar-footer">
+        <div class="cart-subtotal">
+            <span>Subtotal:</span>
+            <span class="subtotal-amount">$0.00</span>
+        </div>
+        <a href="/cart" class="btn btn-primary btn-view-cart">View Cart</a>
+        <a href="/checkout" class="btn btn-outline btn-checkout">Checkout</a>
+        <div class="secure-checkout">
+            <i class="fas fa-lock"></i>
+            <span>Secure Checkout</span>
+        </div>
+    </div>
+</div>

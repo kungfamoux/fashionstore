@@ -1,0 +1,78 @@
+<%- include('layouts/main', { 
+    title: 'FashionStore - Your Style Destination',
+    additionalStyles: ['/css/home.css']
+}) %>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-slider">
+        <div class="hero-slide active" style="background-image: url('/images/hero-1.jpg');">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Summer Collection 2023</h2>
+                    <p>Discover the latest trends in fashion</p>
+                    <a href="/shop/summer-collection" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <h2 class="section-title">Shop by Category</h2>
+        <div class="categories-grid">
+            <a href="/shop/men" class="category-card">
+                <div class="category-image" style="background-image: url('/images/category-men.jpg');"></div>
+                <h3>Men's Fashion</h3>
+            </a>
+            <a href="/shop/women" class="category-card">
+                <div class="category-image" style="background-image: url('/images/category-women.jpg');"></div>
+                <h3>Women's Fashion</h3>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products">
+    <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="products-grid">
+            <!-- Single Product Card -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="/images/products/product-1.jpg" alt="Casual T-Shirt">
+                    <div class="product-actions">
+                        <button class="wishlist-toggle" data-product-id="1">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <a href="/product/casual-t-shirt" class="btn btn-primary">
+                        Add to Cart
+                    </a>
+                </div>
+                <div class="product-details">
+                    <h3><a href="/product/casual-t-shirt">Casual T-Shirt</a></h3>
+                    <div class="product-price">$29.99</div>
+                </div>
+            </div>
+            <!-- More products... -->
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features-section">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature">
+                <i class="fas fa-truck"></i>
+                <h3>Free Shipping</h3>
+                <p>On orders over $50</p>
+            </div>
+            <!-- More features... -->
+        </div>
+    </div>
+</section>

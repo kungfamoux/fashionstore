@@ -1,0 +1,84 @@
+<header class="site-header">
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="shipping-banner">
+                    <p>Free shipping on orders over $50 | Shop now!</p>
+                </div>
+                <div class="account-links">
+                    <% if (user) { %>
+                        <a href="/profile"><i class="fas fa-user"></i> My Account</a>
+                        <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <% } else { %>
+                        <a href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        <a href="/auth/register"><i class="fas fa-user-plus"></i> Register</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/">
+                        <h1>Fashion<span>Store</span></h1>
+                    </a>
+                </div>
+                
+                <div class="search-bar">
+                    <form action="/search" method="GET" class="search-form">
+                        <input type="text" name="q" placeholder="Search for products..." class="search-input">
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="header-icons">
+                    <a href="/wishlist" class="wishlist-icon">
+                        <i class="far fa-heart"></i>
+                        <span class="wishlist-count">0</span>
+                    </a>
+                    <a href="/cart" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count"><%= cartCount || 0 %></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <nav class="main-navigation">
+        <div class="container">
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/shop/men" class="nav-link">Men</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/shop/women" class="nav-link">Women</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/shop/new-arrivals" class="nav-link">New Arrivals</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/shop/sale" class="nav-link">Sale</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+</header>
